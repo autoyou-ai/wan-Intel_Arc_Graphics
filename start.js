@@ -12,14 +12,17 @@ module.exports = async (kernel) => {
           venv: "env",
           env: {
             SERVER_NAME: "127.0.0.1",
-            SERVER_PORT: port
+            SERVER_PORT: port,
+            WAN_USE_IPEX: "{{args.ipex ? '1' : ''}}",
+            ACCELERATE_USE_IPEX: "{{args.ipex ? 'true' : ''}}",
+            MPLCONFIGDIR: "{{path.resolve('app/cache/matplotlib')}}"
           },
           path: "app",
           message: [
-            "python wgp.py --multiple-images {{args.compile ? '--compile' : ''}}"
+            "python wgp.py --multiple-images {{args.device ? '--gpu ' + args.device : ''}} {{args.compile ? '--compile' : ''}}"
           ],
           on: [{
-            "event": "/http:\/\/[0-9.:]+/",   
+            "event": "/(http:\\/\\/[0-9.:]+)/",
             "done": true
           }]
         }
@@ -27,7 +30,7 @@ module.exports = async (kernel) => {
       {
         method: "local.set",
         params: {
-          url: "{{input.event[0]}}"
+          url: "{{input.event[1]}}"
         }
       }
     ]

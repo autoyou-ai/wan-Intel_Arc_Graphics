@@ -4,12 +4,11 @@ module.exports = {
   },
   run: [
     {
-      when: "{{gpu === 'amd' || platform === 'darwin'}}",
+      when: "{{gpu !== 'nvidia'}}",
       method: "notify",
       params: {
-        html: "This app requires an NVIDIA GPU. Not compatible with AMD GPUs and macOS."
-      },
-      next: null
+        html: "Non-NVIDIA GPU detected. This will attempt DirectML on Windows, otherwise fall back to CPU (slow)."
+      }
     },
     {
       method: "shell.run",
@@ -39,6 +38,17 @@ module.exports = {
           path: "app",
           xformers: true
         }
+      }
+    },
+    {
+      when: "{{platform === 'win32' && gpu !== 'nvidia'}}",
+      method: "shell.run",
+      params: {
+        venv: "env",
+        path: "app",
+        message: [
+          "python -c \"import subprocess; subprocess.run(['uv','pip','install','intel-extension-for-pytorch'], check=False)\""
+        ]
       }
     },
     {

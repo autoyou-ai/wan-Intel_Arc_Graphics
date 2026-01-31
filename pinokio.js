@@ -69,6 +69,14 @@ module.exports = {
             params: {
               compile: true
             }
+          }, {
+            icon: "fa-solid fa-microchip",
+            text: "CPU (Intel / IPEX)",
+            href: "start.js",
+            params: {
+              device: "cpu",
+              ipex: true
+            }
           }]
         }, {
           icon: "fa-regular fa-folder-open",
